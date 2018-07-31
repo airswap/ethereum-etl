@@ -1,5 +1,4 @@
 import csv
-import logging
 import os
 import shutil
 import time
@@ -8,6 +7,7 @@ import boto3
 import redis
 from web3 import Web3
 
+from logger import LOGGER
 from ethereumetl.csv_utils import set_max_field_size_limit
 from ethereumetl.file_utils import smart_open
 from ethereumetl.jobs.export_blocks_job import ExportBlocksJob
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             continue
 
         t0 = time.time()
-        logging.info("Running Ethereum export ETL from {start_block} - {end_block} via: {geth}".format(
+        LOGGER.info("Running Ethereum export ETL from {start_block} - {end_block} via: {geth}".format(
             start_block=LAST_BLOCK,
             end_block=CURRENT_BLOCK,
             geth=GETH_URL
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             receipts_and_logs_job.run()
 
         # Upload to S3
-        logging.info("Finished export (took {elapsed}). Uploading results to S3 bucket: s3://{s3_bucket}".format(
+        LOGGER.info("Finished export (took {elapsed}). Uploading results to S3 bucket: s3://{s3_bucket}".format(
             elapsed=time.time() - t0,
             s3_bucket=S3_BUCKET
         ))
@@ -147,7 +147,7 @@ if __name__ == '__main__':
         except FileNotFoundError:
             pass
 
-        logging.info("Finished upload (took {elapsed}). Waiting {interval} minutes until next run...".format(
+        LOGGER.info("Finished upload (took {elapsed}). Waiting {interval} minutes until next run...".format(
             elapsed=time.time() - t0,
             interval=INTERVAL_MINUTES
         ))
