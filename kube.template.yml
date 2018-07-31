@@ -1,0 +1,27 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: $CIRCLE_PROJECT_REPONAME
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: $CIRCLE_PROJECT_REPONAME
+    spec:
+      containers:
+      - name: $CIRCLE_PROJECT_REPONAME
+        image: ${REPO}/$CIRCLE_PROJECT_REPONAME:${CIRCLE_SHA1}
+        env:
+        - name: KUBERNETES
+          value: "true"
+        - name: GETH_URL
+          value: https://geth.production.airswap.io
+        - name: S3_BUCKET
+          value: ethereum-etl.${DOMAIN}
+        - name: REDIS_HOST
+          value: redis-ethgasstation.${DOMAIN}
+        - name: REDIS_KEY
+          value: lastEthereumExportBlock
+        - name: INTERVAL_MINUTES
+          value: "5"
